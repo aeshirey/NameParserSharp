@@ -1,5 +1,5 @@
-﻿Copyright Adam Shirey
-http://dingostick.com
+Copyright Adam Shirey
+https://github.com/aeshirey/NameParserSharp
 
 Derived from nameparser 0.36 (https://pypi.python.org/pypi/nameparser), copyright Derek Gulbranson <derek73 at gmail>.
 http://derekgulbranson.com/
