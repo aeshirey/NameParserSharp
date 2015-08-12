@@ -338,7 +338,7 @@ namespace NameParser
                     for (var i = 0; i < pieces.Length; i++)
                     {
                         var piece = pieces[i];
-                        var nxt = i == pieces.Length - 1 ? pieces[i] : string.Empty;
+                        var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];
 
                         if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) || pieces.Length == 1))
                             _TitleList.Add(piece);
