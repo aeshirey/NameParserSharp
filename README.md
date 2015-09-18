@@ -21,3 +21,5 @@ NameParserSharp implements the functionality of the Python project on which it i
 * eliminates nearly all regular expressions for efficiency
 * adds unit tests
 * improves nickname handling to expand delimiters: `John (Jack) Torrence` == `John 'Jack' Torrence` == `John "Jack" Torrence`
+
+NameParserSharp is available as a NuGet package: `Install-Package NameParserSharp`
