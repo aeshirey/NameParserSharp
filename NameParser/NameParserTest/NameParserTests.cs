@@ -83,5 +83,29 @@
 
             Assert.IsTrue(fml == lfm);
         }
+
+        [TestMethod]
+        public void NicknameAtBeginning_DoubleQuote()
+        {
+            var parsed = new HumanName("\"TREY\" ROBERT HENRY BUSH III");
+
+            Assert.AreEqual(parsed.First, "ROBERT");
+            Assert.AreEqual(parsed.Middle, "HENRY");
+            Assert.AreEqual(parsed.Last, "BUSH");
+            Assert.AreEqual(parsed.Nickname, "TREY");
+            Assert.AreEqual(parsed.Suffix, "III");
+        }
+        [TestMethod]
+
+        public void NicknameAtBeginning_SingleQuote()
+        {
+            var parsed = new HumanName("'TREY' ROBERT HENRY BUSH III");
+
+            Assert.AreEqual(parsed.First, "ROBERT");
+            Assert.AreEqual(parsed.Middle, "HENRY");
+            Assert.AreEqual(parsed.Last, "BUSH");
+            Assert.AreEqual(parsed.Nickname, "TREY");
+            Assert.AreEqual(parsed.Suffix, "III");
+        }
     }
 }
