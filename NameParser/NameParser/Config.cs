@@ -29,7 +29,7 @@
         /// </summary>
         private static readonly ISet<string> Prefixes = new HashSet<string> 
         {
-            "abu", "bon", "bin", "da", "dal", "de", "del", "der", "de", "di", "dí", "ibn", "la", "le", "san", "santa", "st", "ste", "van", "vel", "von"
+            "abu", "bon", "bin", "da", "dal", "de", "del", "dem", "den", "der", "de", "di", "dí", "het", "ibn", "in", "la", "le", "onder", "op", "san", "santa", "st", "ste", "'t", "ten", "van", "vel", "von"
         };
 
         /// <summary>

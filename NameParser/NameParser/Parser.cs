@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace NameParser
+﻿namespace NameParser
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -37,6 +36,8 @@ namespace NameParser
                 _LastList = new List<string>();
                 _SuffixList = new List<string>();
                 _NicknameList = new List<string>();
+                _LastBaseList = new List<string>();
+                _LastPrefixList = new List<string>();
 
                 ParseFullName();
             }
@@ -71,6 +72,18 @@ namespace NameParser
         {
             get { return string.Join(" ", _NicknameList); }
         }
+
+        //public string LastBase { get; private set; }
+        public string LastBase
+        {
+            get { return string.Join(" ", _LastBaseList); }
+        }
+
+        //public string LastPrefixes { get; private set; }
+        public string LastPrefixes
+        {
+            get { return string.Join(" ", _LastPrefixList); }
+        }
         #endregion
 
         private string _FullName, _OriginalName;
@@ -81,6 +94,8 @@ namespace NameParser
         private IList<string> _LastList;
         private IList<string> _SuffixList;
         private IList<string> _NicknameList;
+        private IList<string> _LastBaseList;
+        private IList<string> _LastPrefixList;
 
         public HumanName(string fullName)
         {
@@ -131,6 +146,10 @@ namespace NameParser
                 d["middle"] = Middle;
             if (includeEmpty || !string.IsNullOrEmpty(Last))
                 d["last"] = Last;
+            if (includeEmpty || !string.IsNullOrEmpty(LastBase))
+                d["lastbase"] = LastBase;
+            if (includeEmpty || !string.IsNullOrEmpty(LastPrefixes))
+                d["lastprefixes"] = LastPrefixes;
             if (includeEmpty || !string.IsNullOrEmpty(Suffix))
                 d["suffix"] = Suffix;
             if (includeEmpty || !string.IsNullOrEmpty(Nickname))
@@ -138,7 +157,7 @@ namespace NameParser
 
             return d;
         }
-        
+
         #region  Parse helpers
         private static bool IsTitle(string value)
         {
@@ -184,16 +203,13 @@ namespace NameParser
         /// Words with a single period at the end, or a single uppercase letter.
         /// </summary>
         /// <param name="value"></param>
-        /// <returns></returns>
+        /// <returns>True iff <see cref="value"/> matches the regex "^[A-Za-z].?$"</returns>
         private static bool IsAnInitial(string value)
         {
             if (string.IsNullOrEmpty(value) || value.Length > 2)
                 return false;
 
             return char.IsLetter(value[0]) && (value.Length == 1 || value[1] == '.');
-
-            // @"^(\w\.|[A-Z])?$")
-            // return Regexes["initial"].IsMatch(value);
         }
         #endregion
 
@@ -224,13 +240,35 @@ namespace NameParser
         }
 
         /// <summary>
+        /// Parse out the last name components into prefixes and a base last name
+        /// in order to allow sorting. Prefixes are those in <see cref="Prefixes"/>,
+        /// start off <see cref="Last"/> and are contiguous. See <seealso cref="https://en.wikipedia.org/wiki/Tussenvoegsel"/>
+        /// </summary>
+        private void PostProcessLastname()
+        {
+            // parse out 'words' from the last name
+            var words = _LastList
+                .SelectMany(part => part.Split(' '))
+                .ToList();
+
+            var prefixCount = 0;
+            while (prefixCount < words.Count && IsPrefix(words[prefixCount]))
+            {
+                prefixCount++;
+            }
+
+            _LastPrefixList = words.Take(prefixCount).ToList();
+            _LastBaseList = words.Skip(prefixCount).ToList();
+        }
+
+        /// <summary>
         /// The main parse method for the parser. This method is run upon assignment to the
         /// fullName attribute or instantiation.
         /// 
         /// Basic flow is to hand off to `pre_process` to handle nicknames. It
         /// then splits on commas and chooses a code path depending on the number of commas.
         /// `parsePieces` then splits those parts on spaces and
-        /// `join_on_conjunctions` joins any pieces next to conjunctions. 
+        /// `joinOnConjunctions` joins any pieces next to conjunctions. 
         /// </summary>
         private void ParseFullName()
         {
@@ -254,9 +292,7 @@ namespace NameParser
                     var piece = pieces[i];
                     var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];
 
-
                     // title must have a next piece, unless it's just a title
-
                     if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) | pieces.Length == 1))
                         _TitleList.Add(piece);
                     else if (string.IsNullOrEmpty(First))
@@ -334,7 +370,6 @@ namespace NameParser
                             _LastList.Add(piece);
                     }
 
-
                     for (var i = 0; i < pieces.Length; i++)
                     {
                         var piece = pieces[i];
@@ -363,6 +398,7 @@ namespace NameParser
                          && !_NicknameList.Any();
 
             PostProcessFirstnames();
+            PostProcessLastname();
         }
 
         private static void ParseNicknames(ref string fullName, out IList<string> nicknameList)
@@ -414,7 +450,7 @@ namespace NameParser
                 tmp.AddRange(part.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim(',')));
             }
 
-            return join_on_conjunctions(tmp, additionalPartsCount);
+            return joinOnConjunctions(tmp, additionalPartsCount);
         }
 
         /// <summary>
@@ -424,13 +460,15 @@ namespace NameParser
         /// <param name="pieces">name pieces strings after split on spaces</param>
         /// <param name="additionalPartsCount"></param>
         /// <returns>new list with piece next to conjunctions merged into one piece with spaces in it.</returns>
-        internal static string[] join_on_conjunctions(List<string> pieces, int additionalPartsCount = 0)
+        internal static string[] joinOnConjunctions(List<string> pieces, int additionalPartsCount = 0)
         {
             var length = pieces.Count() + additionalPartsCount;
 
             // don't join on conjuctions if there are only 2 parts
             if (length < 3)
+            {
                 return pieces.ToArray();
+            }
 
             foreach (var conj in pieces.Where(IsConjunction).Reverse())
             {
@@ -458,7 +496,6 @@ namespace NameParser
                     string newPiece;
                     if (index == 0)
                     {
-
                         // if this is the first piece and it's a conjunction
                         var nxt = pieces[index + 1];
 
@@ -584,9 +621,11 @@ namespace NameParser
             _TitleList = _TitleList.Select(CapitalizePiece).ToList();
             _FirstList = _FirstList.Select(CapitalizePiece).ToList();
             _MiddleList = _MiddleList.Select(CapitalizePiece).ToList();
-            _LastList = _LastList.Select(CapitalizePiece).ToList();
+            _LastList = _LastList.Select(CapitalizePiece).ToList(); // CapitalizePiece recognizes prefixes, so its okay to normalize "van der waals" like this
             _SuffixList = _SuffixList.Select(CapitalizePiece).ToList();
             _NicknameList = _NicknameList.Select(CapitalizePiece).ToList();
+            _LastBaseList = _LastBaseList.Select(CapitalizePiece).ToList();
+            // normalizing _LastPrefixList would effectively be a no-op, so don't bother calling it
 
             var fullNamePieces = _FullName
                 .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
