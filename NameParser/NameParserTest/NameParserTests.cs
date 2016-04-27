@@ -2,10 +2,31 @@
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using NameParser;
+    using System;
 
     [TestClass]
     public class NameParserTests
     {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void NullInput()
+        {
+            var parsed = new HumanName(null);
+        }
+
+
+        [TestMethod]
+        public void BlankInput()
+        {
+            var parsed = new HumanName(string.Empty);
+            Assert.AreEqual(string.Empty, parsed.First);
+            Assert.AreEqual(string.Empty, parsed.Middle);
+            Assert.AreEqual(string.Empty, parsed.Last);
+            Assert.AreEqual(string.Empty, parsed.Title);
+            Assert.AreEqual(string.Empty, parsed.Nickname);
+            Assert.AreEqual(string.Empty, parsed.Suffix);
+        }
+
         [TestMethod]
         public void JFK()
         {
@@ -133,12 +154,98 @@
             Assert.AreEqual("van der", parsed.LastPrefixes); // specifically, the prefixes to the last name
             Assert.AreEqual("waals", parsed.LastBase); // only the base component of the last name
             Assert.AreEqual("van der waals", parsed.Last); // the full last name, combined
-            
+
             parsed.Normalize();
             Assert.AreEqual("Johannes", parsed.First);
             Assert.AreEqual("van der", parsed.LastPrefixes);
             Assert.AreEqual("Waals", parsed.LastBase);
             Assert.AreEqual("van der Waals", parsed.Last);
+        }
+
+        [TestMethod]
+    public void TwoNames_MacAthur()
+    {
+        HumanName.ParseMultipleNames = true;
+        var parsed = new HumanName("John D. and Catherine T. MacArthur");
+
+        Assert.AreEqual("John", parsed.First);
+        Assert.AreEqual("D.", parsed.Middle);
+        Assert.AreEqual("MacArthur", parsed.Last);
+
+        Assert.IsNotNull(parsed.AdditionalName);
+
+        Assert.AreEqual("Catherine", parsed.AdditionalName.First);
+        Assert.AreEqual("T.", parsed.AdditionalName.Middle);
+        Assert.AreEqual("MacArthur", parsed.AdditionalName.Last);
+
+        Assert.IsNull(parsed.AdditionalName.AdditionalName);
+    }
+
+        [TestMethod]
+        public void TwoNames_TitleFirstInitialLast()
+        {
+            HumanName.ParseMultipleNames = true;
+            var parsed = new HumanName("Mr S Bloggs and Miss L Jones");
+
+            Assert.AreEqual("Mr", parsed.Title);
+            Assert.AreEqual("S", parsed.First);
+            Assert.AreEqual("", parsed.Middle);
+            Assert.AreEqual("Bloggs", parsed.Last);
+
+            Assert.IsNotNull(parsed.AdditionalName);
+
+            Assert.AreEqual("Miss", parsed.AdditionalName.Title);
+            Assert.AreEqual("L", parsed.AdditionalName.First);
+            Assert.AreEqual("", parsed.AdditionalName.Middle);
+            Assert.AreEqual("Jones", parsed.AdditionalName.Last);
+
+            Assert.IsNull(parsed.AdditionalName.AdditionalName);
+        }
+
+        [TestMethod]
+        public void TwoNames_TitleFirstInitialMiddleInitialLast()
+        {
+            HumanName.ParseMultipleNames = true;
+            var parsed = new HumanName("Mr S R Bloggs and Miss L B Jones");
+
+            Assert.AreEqual("Mr", parsed.Title);
+            Assert.AreEqual("S", parsed.First);
+            Assert.AreEqual("R", parsed.Middle);
+            Assert.AreEqual("Bloggs", parsed.Last);
+
+            Assert.IsNotNull(parsed.AdditionalName);
+
+            Assert.AreEqual("Miss", parsed.AdditionalName.Title);
+            Assert.AreEqual("L", parsed.AdditionalName.First);
+            Assert.AreEqual("B", parsed.AdditionalName.Middle);
+            Assert.AreEqual("Jones", parsed.AdditionalName.Last);
+
+            Assert.IsNull(parsed.AdditionalName.AdditionalName);
+        }
+
+        [TestMethod]
+        public void ThreeNames()
+        {
+            HumanName.ParseMultipleNames = true;
+            var johnSmith = new HumanName("Mr John Smith and Mrs Jane Doe and President Abraham Lincoln");
+
+            Assert.IsNotNull(johnSmith.AdditionalName);
+            var janeDoe = johnSmith.AdditionalName;
+
+            Assert.IsNotNull(janeDoe.AdditionalName);
+            var abrahamLincoln = janeDoe.AdditionalName;
+            
+            Assert.AreEqual("Mr", johnSmith.Title);
+            Assert.AreEqual("John", johnSmith.First);
+            Assert.AreEqual("Smith", johnSmith.Last);
+
+            Assert.AreEqual("Mrs", janeDoe.Title);
+            Assert.AreEqual("Jane", janeDoe.First);
+            Assert.AreEqual("Doe", janeDoe.Last);
+            
+            Assert.AreEqual("President", abrahamLincoln.Title);
+            Assert.AreEqual("Abraham", abrahamLincoln.First);
+            Assert.AreEqual("Lincoln", abrahamLincoln.Last);
         }
     }
 }
