@@ -21,5 +21,6 @@ NameParserSharp implements the functionality of the Python project on which it i
 * eliminates nearly all regular expressions for efficiency
 * adds unit tests
 * improves nickname handling to expand delimiters: `John (Jack) Torrence` == `John 'Jack' Torrence` == `John "Jack" Torrence`
+* parses out multiple names from a single string as you might expect, as in `mr john and mrs jane doe`
 
 NameParserSharp is available as a NuGet package: `Install-Package NameParserSharp`
