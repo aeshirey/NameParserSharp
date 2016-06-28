@@ -247,5 +247,17 @@
             Assert.AreEqual("Abraham", abrahamLincoln.First);
             Assert.AreEqual("Lincoln", abrahamLincoln.Last);
         }
+
+		[TestMethod]
+		public void TwoCommaWithMiddleName()
+		{
+			var parsed = new HumanName("Surname, John Middle, III");
+
+			Assert.AreEqual(parsed.First, "John");
+			Assert.AreEqual(parsed.Middle, "Middle");
+			Assert.AreEqual(parsed.Last, "Surname");
+			Assert.AreEqual(parsed.Suffix, "III");
+		}
+
     }
 }

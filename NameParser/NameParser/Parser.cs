@@ -477,10 +477,9 @@
                         _SuffixList.Add(piece);
                     else
                         _MiddleList.Add(piece);
-
-                    if (parts.Count() >= 3 && !string.IsNullOrEmpty(parts[2]))
-                        _SuffixList = _SuffixList.Concat(parts.Skip(2)).ToList();
                 }
+				if (parts.Count() >= 3 && !string.IsNullOrEmpty(parts[2]))
+					_SuffixList = _SuffixList.Concat(parts.Skip(2)).ToList();
             }
 
             IsUnparsable = !_TitleList.Any()
