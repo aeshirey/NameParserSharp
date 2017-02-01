@@ -321,10 +321,13 @@
                 if (_FullName.Contains('&'))
                 {
                     var split = _FullName.IndexOf('&');
-                    _FullName = _FullName.Substring(0, split);
+					
+                    var primary = _FullName.Substring(0, split);
 
                     var secondary = _FullName.Substring(split + 1);
                     AdditionalName = new HumanName(secondary);
+					
+                    _FullName = primary;
                 }
                 else if (_FullName.ToLowerInvariant().Contains(" and "))
                 {

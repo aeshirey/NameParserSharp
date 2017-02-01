@@ -179,6 +179,21 @@
         Assert.AreEqual("MacArthur", parsed.AdditionalName.Last);
 
         Assert.IsNull(parsed.AdditionalName.AdditionalName);
+
+
+        parsed = new HumanName("John D. & Catherine T. MacArthur");
+
+        Assert.AreEqual("John", parsed.First);
+        Assert.AreEqual("D.", parsed.Middle);
+        Assert.AreEqual("MacArthur", parsed.Last);
+
+        Assert.IsNotNull(parsed.AdditionalName);
+
+        Assert.AreEqual("Catherine", parsed.AdditionalName.First);
+        Assert.AreEqual("T.", parsed.AdditionalName.Middle);
+        Assert.AreEqual("MacArthur", parsed.AdditionalName.Last);
+
+        Assert.IsNull(parsed.AdditionalName.AdditionalName);
     }
 
         [TestMethod]
