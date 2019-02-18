@@ -274,6 +274,23 @@
         }
 
         [TestMethod]
+        public void FirstMiddleLastSuffix_NoCommas()
+        {
+            var john = new HumanName("John Quincy Smith III");
+            Assert.AreEqual("John", john.First);
+            Assert.AreEqual("Quincy", john.Middle);
+            Assert.AreEqual("Smith", john.Last);
+            Assert.AreEqual("III", john.Suffix);
+
+
+            var robert = new HumanName("Robert Lee Elder III");
+            Assert.AreEqual("Robert", robert.First);
+            Assert.AreEqual("Lee", robert.Middle);
+            Assert.AreEqual("Elder", robert.Last);
+            Assert.AreEqual("III", robert.Suffix);
+        }
+
+        [TestMethod]
 		public void TwoCommaWithMiddleName()
 		{
 			var parsed = new HumanName("Surname, John Middle, III");

@@ -157,21 +157,44 @@
             var d = new Dictionary<string, string>();
 
             if (includeEmpty || !string.IsNullOrEmpty(Title))
+            {
                 d["title"] = Title;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(First))
+            {
                 d["first"] = First;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(Middle))
+            {
                 d["middle"] = Middle;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(Last))
+            {
                 d["last"] = Last;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(LastBase))
+            {
                 d["lastbase"] = LastBase;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(LastPrefixes))
+            {
                 d["lastprefixes"] = LastPrefixes;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(Suffix))
+            {
                 d["suffix"] = Suffix;
+            }
+
             if (includeEmpty || !string.IsNullOrEmpty(Nickname))
+            {
                 d["nickname"] = Nickname;
+            }
 
             return d;
         }
@@ -225,7 +248,9 @@
         private static bool IsAnInitial(string value)
         {
             if (string.IsNullOrEmpty(value) || value.Length > 2)
+            {
                 return false;
+            }
 
             return char.IsLetter(value[0]) && (value.Length == 1 || value[1] == '.');
         }
@@ -321,12 +346,12 @@
                 if (_FullName.Contains('&'))
                 {
                     var split = _FullName.IndexOf('&');
-					
+
                     var primary = _FullName.Substring(0, split);
 
                     var secondary = _FullName.Substring(split + 1);
                     AdditionalName = new HumanName(secondary);
-					
+
                     _FullName = primary;
                 }
                 else if (_FullName.ToLowerInvariant().Contains(" and "))
@@ -368,10 +393,23 @@
                     var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];
 
                     // title must have a next piece, unless it's just a title
-                    if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) | pieces.Length == 1))
-                        _TitleList.Add(piece);
+                    if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) || pieces.Length == 1))
+                    {
+                        // some last names appear as titles (https://github.com/aeshirey/NameParserSharp/issues/9)
+                        // if we've already parsed out titles, first, or middle names, something appearing as a title may in fact be a last name
+                        if (_FirstList.Count > 0 || _MiddleList.Count > 0)
+                        {
+                            _LastList.Add(piece);
+                        }
+                        else
+                        {
+                            _TitleList.Add(piece);
+                        }
+                    }
                     else if (string.IsNullOrEmpty(First))
+                    {
                         _FirstList.Add(piece);
+                    }
                     else if (AreSuffixes(pieces.Skip(i + 1)))
                     {
                         _LastList.Add(piece);
@@ -385,8 +423,15 @@
                     }
                     else if (!ParseMultipleNames || AdditionalName == null)
                     {
-                        // no additional name, so treat this as a last
-                        _LastList.Add(piece);
+                        // no additional name. some last names can appear to be suffixes. try to figure this out
+                        if (_LastList.Count > 0 && IsSuffix(piece))
+                        {
+                            _SuffixList.Add(piece);
+                        }
+                        else
+                        {
+                            _LastList.Add(piece);
+                        }
                     }
                     else if (AdditionalName._LastList.Any() && IsAnInitial(piece))
                     {
@@ -467,9 +512,13 @@
 
                     // the first one is always a last name, even if it look like a suffix
                     if (IsSuffix(piece) && _LastList.Any())
+                    {
                         _SuffixList.Add(piece);
+                    }
                     else
+                    {
                         _LastList.Add(piece);
+                    }
                 }
 
                 for (var i = 0; i < pieces.Length; i++)
@@ -478,16 +527,26 @@
                     var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];
 
                     if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) || pieces.Length == 1))
+                    {
                         _TitleList.Add(piece);
+                    }
                     else if (string.IsNullOrEmpty(First))
+                    {
                         _FirstList.Add(piece);
+                    }
                     else if (IsSuffix(piece))
+                    {
                         _SuffixList.Add(piece);
+                    }
                     else
+                    {
                         _MiddleList.Add(piece);
+                    }
                 }
-				if (parts.Count() >= 3 && !string.IsNullOrEmpty(parts[2]))
-					_SuffixList = _SuffixList.Concat(parts.Skip(2)).ToList();
+                if (parts.Count() >= 3 && !string.IsNullOrEmpty(parts[2]))
+                {
+                    _SuffixList = _SuffixList.Concat(parts.Skip(2)).ToList();
+                }
             }
 
             IsUnparsable = !_TitleList.Any()
@@ -681,7 +740,9 @@
         {
             var wordLower = word.ToLower().Replace(".", string.Empty);
             if (IsPrefix(word) || IsConjunction(word))
+            {
                 return wordLower;
+            }
 
             // "phd" => "Ph.D."; "ii" => "II"
             var exception = CapitalizationExceptions.FirstOrDefault(tup => tup.Item1 == wordLower);
@@ -704,7 +765,9 @@
         private static string ToTitleCase(string s)
         {
             if (string.IsNullOrWhiteSpace(s))
+            {
                 return string.Empty;
+            }
 
             return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
         }

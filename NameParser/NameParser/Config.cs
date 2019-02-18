@@ -471,7 +471,7 @@
             "royal",
             "honorable",
             "honourable",
-            "hon", // sorry Hon Solo, but judges seem more common.
+            "hon",
             "magistrate",
             "mag",
             "judge",
