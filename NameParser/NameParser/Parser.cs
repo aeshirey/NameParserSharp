@@ -350,7 +350,12 @@
                 .Select(part => part.Trim())
                 .ToList();
 
-            if (parts.Count == 1)
+            if (parts.Count == 0)
+            {
+                // Edge case where the input was all in parens and has become the nickname
+                // See https://github.com/aeshirey/NameParserSharp/issues/8
+            }
+            else if (parts.Count == 1)
             {
                 // no commas, title first middle middle middle last suffix
                 //            part[0]

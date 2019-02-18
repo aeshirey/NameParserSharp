@@ -263,7 +263,17 @@
             Assert.AreEqual("Lincoln", abrahamLincoln.Last);
         }
 
-		[TestMethod]
+        [TestMethod]
+        // https://github.com/aeshirey/NameParserSharp/issues/8
+        public void Parens()
+        {
+            var johnSmith = new HumanName("(John Smith)");
+            Assert.AreEqual(string.Empty, johnSmith.First);
+            Assert.AreEqual(string.Empty, johnSmith.Last);
+            Assert.AreEqual("John Smith", johnSmith.Nickname);
+        }
+
+        [TestMethod]
 		public void TwoCommaWithMiddleName()
 		{
 			var parsed = new HumanName("Surname, John Middle, III");
