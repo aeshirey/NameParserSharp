@@ -68,10 +68,11 @@ ipch/
 *.sdf
 *.cachefile
 
-# Visual Studio profiler
+# Visual Studio
 *.psess
 *.vsp
 *.vspx
+*.vs
 
 # TFS 2012 Local Workspace
 $tf/

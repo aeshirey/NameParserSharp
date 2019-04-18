@@ -1,9 +1,9 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NameParser;
+using System;
+
 namespace NameParseTest
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using NameParser;
-    using System;
-
     [TestClass]
     public class NameParserTests
     {
