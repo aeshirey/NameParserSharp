@@ -1,4 +1,4 @@
-﻿namespace NameParser
+namespace NameParser
 {
     using System;
     using System.Collections.Generic;
@@ -711,7 +711,7 @@
                 if (nextSuffix.Length > 0)
                 {
                     var j = pieces.IndexOf(nextSuffix[0]);
-                    var newPiece = string.Join(" ", pieces.Skip(i).Take(j - i + 1));
+                    var newPiece = string.Join(" ", pieces.Skip(i).Take(j - i));
 
                     pieces = pieces
                         .Take(i)
