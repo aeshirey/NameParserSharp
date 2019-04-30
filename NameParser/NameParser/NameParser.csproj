@@ -1,6 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard20;net45</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
+    <FileVersion>1.4.0.0</FileVersion>
+    <PackageLicenseUrl>https://licenses.nuget.org/LGPL-2.1-or-later</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/aeshirey/NameParserSharp</PackageProjectUrl>
+    <Description>Parses full name into first name, middle name, last name, nickname, title, and suffix fields</Description>
+    <Version>1.4.0</Version>
+    <PackageId>NameParserSharp</PackageId>
+    <Authors>Adam Shirey</Authors>
+    <PackageTags>human name parser parsing first middle last nickname</PackageTags>
+    <RepositoryUrl>https://github.com/aeshirey/NameParserSharp</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
