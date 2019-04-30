@@ -1,9 +1,9 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NameParser;
+using System;
+
 namespace NameParseTest
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using NameParser;
-    using System;
-
     [TestClass]
     public class NameParserTests
     {
@@ -249,7 +249,7 @@ namespace NameParseTest
 
             Assert.IsNotNull(janeDoe.AdditionalName);
             var abrahamLincoln = janeDoe.AdditionalName;
-            
+
             Assert.AreEqual("Mr", johnSmith.Title);
             Assert.AreEqual("John", johnSmith.First);
             Assert.AreEqual("Smith", johnSmith.Last);
@@ -257,7 +257,7 @@ namespace NameParseTest
             Assert.AreEqual("Mrs", janeDoe.Title);
             Assert.AreEqual("Jane", janeDoe.First);
             Assert.AreEqual("Doe", janeDoe.Last);
-            
+
             Assert.AreEqual("President", abrahamLincoln.Title);
             Assert.AreEqual("Abraham", abrahamLincoln.First);
             Assert.AreEqual("Lincoln", abrahamLincoln.Last);
