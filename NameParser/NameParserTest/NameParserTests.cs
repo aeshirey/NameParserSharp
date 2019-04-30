@@ -300,6 +300,22 @@ namespace NameParseTest
 			Assert.AreEqual(parsed.Last, "Surname");
 			Assert.AreEqual(parsed.Suffix, "III");
 		}
+        
+        [TestMethod]
+        public void FirstLastPrefixesLastSuffix_NoCommas() {
+            var valeriano = new HumanName("Valeriano De Leon JR.");
+            
+            Assert.AreEqual("Valeriano", valeriano.First);
+            Assert.AreEqual("De", valeriano.LastPrefixes);
+            Assert.AreEqual("De Leon", valeriano.Last);
+            Assert.AreEqual("JR.", valeriano.Suffix);
 
+
+            var quincy = new HumanName("Quincy De La Rosa Sr");
+            Assert.AreEqual("Quincy", quincy.First);
+            Assert.AreEqual("De La", quincy.LastPrefixes);
+            Assert.AreEqual("De La Rosa", quincy.Last);
+            Assert.AreEqual("Sr", quincy.Suffix);
+        }
     }
 }
