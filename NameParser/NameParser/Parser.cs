@@ -701,7 +701,8 @@ namespace NameParser
             }
 
             // join prefixes to following lastnames: ['de la Vega'], ['van Buren']
-            var prefixes = pieces.Where(IsPrefix).ToArray();
+            // skip first part to avoid counting it as a prefix, e.g. "van" is either a first name or a preposition depending on its position
+            var prefixes = pieces.Skip(1).Where(IsPrefix).ToArray();
             if (prefixes.Length > 0)
             {
                 var i = pieces.IndexOf(prefixes[0]);
