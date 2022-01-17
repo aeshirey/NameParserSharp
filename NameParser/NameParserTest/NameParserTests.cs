@@ -367,14 +367,22 @@ namespace NameParseTest
         /// <summary>
         /// https://github.com/aeshirey/NameParserSharp/issues/20
         /// </summary>
-        //[TestMethod]
+        [TestMethod]
         public void FirstNameIsPrefix()
         {
-            var parsed = new HumanName("Mr. Del Richards");
-            Assert.AreEqual(parsed.Title, "Mr.");
-            Assert.AreEqual(parsed.First, "Del");
-            Assert.AreEqual(parsed.Last, "Richards");
-            Assert.AreEqual(parsed.LastPrefixes, "");
+            // Default behavior
+            var parsed_prefix = new HumanName("Mr. Del Richards");
+            Assert.AreEqual(parsed_prefix.Title, "Mr.");
+            Assert.AreEqual(parsed_prefix.First, "");
+            Assert.AreEqual(parsed_prefix.Last, "Del Richards");
+            Assert.AreEqual(parsed_prefix.LastPrefixes, "Del");
+
+            // A single prefix should be treated as a first name when no first exists
+            var parsed_first = new HumanName("Mr. Del Richards", Prefer.FirstOverPrefix);
+            Assert.AreEqual(parsed_first.Title, "Mr.");
+            Assert.AreEqual(parsed_first.First, "Del");
+            Assert.AreEqual(parsed_first.Last, "Richards");
+            Assert.AreEqual(parsed_first.LastPrefixes, "");
         }
     }
 }

@@ -48,35 +48,17 @@ namespace NameParser
             }
         }
 
-        public string Title
-        {
-            get { return string.Join(" ", _TitleList); }
-        }
+        public string Title => string.Join(" ", _TitleList);
 
-        public string First
-        {
-            get { return string.Join(" ", _FirstList); }
-        }
+        public string First => string.Join(" ", _FirstList);
 
-        public string Middle
-        {
-            get { return string.Join(" ", _MiddleList); }
-        }
+        public string Middle => string.Join(" ", _MiddleList);
 
-        public string Last
-        {
-            get { return string.Join(" ", _LastList); }
-        }
+        public string Last => string.Join(" ", _LastList);
 
-        public string Suffix
-        {
-            get { return string.Join(" ", _SuffixList); }
-        }
+        public string Suffix => string.Join(" ", _SuffixList);
 
-        public string Nickname
-        {
-            get { return string.Join(" ", _NicknameList); }
-        }
+        public string Nickname => string.Join(" ", _NicknameList);
 
         /// <summary>
         /// If <see cref="ParseMultipleNames"/> is true and the input contains "&" or "and", the additional
@@ -86,17 +68,8 @@ namespace NameParser
         /// </summary>
         public HumanName AdditionalName { get; private set; }
 
-        //public string LastBase { get; private set; }
-        public string LastBase
-        {
-            get { return string.Join(" ", _LastBaseList); }
-        }
-
-        //public string LastPrefixes { get; private set; }
-        public string LastPrefixes
-        {
-            get { return string.Join(" ", _LastPrefixList); }
-        }
+        public string LastBase => string.Join(" ", _LastBaseList);
+        public string LastPrefixes => string.Join(" ", _LastPrefixList);
         #endregion
 
         private string _FullName, _OriginalName;
@@ -109,13 +82,16 @@ namespace NameParser
         private IList<string> _NicknameList;
         private IList<string> _LastBaseList;
         private IList<string> _LastPrefixList;
+        private Prefer prefs;
 
-        public HumanName(string fullName)
+        public HumanName(string fullName, Prefer prefs = Prefer.Default)
         {
             if (fullName == null)
             {
                 throw new ArgumentNullException("fullName");
             }
+
+            this.prefs = prefs;
 
             FullName = fullName;
         }
@@ -300,7 +276,21 @@ namespace NameParser
                 prefixCount++;
             }
 
-            _LastPrefixList = words.Take(prefixCount).ToList();
+            if (this.prefs.HasFlag(Prefer.FirstOverPrefix)
+                && this._FirstList.Count == 0
+                && prefixCount == 1
+                && words.Count > 1)
+            {
+                _FirstList = words.Take(1).ToList();
+
+                _LastList = words.Skip(1).ToList();
+            }
+            else
+            {
+
+                _LastPrefixList = words.Take(prefixCount).ToList();
+            }
+
             _LastBaseList = words.Skip(prefixCount).ToList();
         }
 
