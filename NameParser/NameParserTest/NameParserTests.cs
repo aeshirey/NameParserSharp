@@ -356,7 +356,7 @@ namespace NameParseTest
 
 
             HumanName.Suffixes.Add("2nd");
-            var with_2nd = new HumanName("Mr. John Smith the 2nd");
+            var with_2nd = new HumanName("Mr. John Smith 2nd");
             Assert.AreEqual("Mr.", with_2nd.Title);
             Assert.AreEqual("John", with_2nd.First);
             Assert.AreEqual("Smith", with_2nd.Last);
