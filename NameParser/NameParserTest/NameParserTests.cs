@@ -319,6 +319,20 @@ namespace NameParseTest
             Assert.AreEqual("Sr", quincy.Suffix);
         }
 
+        [DataRow("VAN L JOHNSON", "VAN", "L", "JOHNSON")]
+        [DataRow("VAN JOHNSON", "VAN", "", "JOHNSON")]
+        [DataRow("JOHNSON, VAN L", "VAN", "L", "JOHNSON")]
+        [TestMethod]
+        // https://github.com/aeshirey/NameParserSharp/issues/15
+        public void Prefix_AsFirstName(string full, string first, string middle, string last)
+        {
+            var sut = new HumanName(full);
+
+            Assert.AreEqual(first, sut.First);
+            Assert.AreEqual(middle, sut.Middle);
+            Assert.AreEqual(last, sut.Last);
+        }
+
 
         [TestMethod]
         public void Conjunctions()
