@@ -9,7 +9,7 @@
         /// <summary>
         /// Any pieces that are not capitalized by capitalizing the first letter.
         /// </summary>
-        private static readonly ISet<Tuple<string, string>> CapitalizationExceptions = new HashSet<Tuple<string, string>>
+        public static readonly ISet<Tuple<string, string>> CapitalizationExceptions = new HashSet<Tuple<string, string>>
         {
             Tuple.Create("ii", "II"),
             Tuple.Create("iii", "III"),
@@ -21,13 +21,13 @@
         /// <summary>
         /// Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&". "of" and "the" are also include to facilitate joining multiple titles, e.g. "President of the United States".
         /// </summary>
-        private static readonly ISet<string> Conjunctions = new HashSet<string> { "&", "and", "et", "e", "of", "the", "und", "y" };
+        public static readonly ISet<string> Conjunctions = new HashSet<string> { "&", "and", "et", "e", "of", "the", "und", "y" };
 
 
         /// <summary>
         /// Name pieces that appear before a last name. They join to the piece that follows them to make one new piece.
         /// </summary>
-        private static readonly ISet<string> Prefixes = new HashSet<string> 
+        public static readonly ISet<string> Prefixes = new HashSet<string> 
         {
             "abu", "bon", "bin", "da", "dal", "de", "del", "dem", "den", "der", "de", "di", "dí", "het", "ibn", "in", "la", "le", "onder", "op", "san", "santa", "st", "ste", "'t", "ten", "van", "vel", "von"
         };
@@ -44,7 +44,7 @@
         /// These may be updated in the future because some of them are actually titles that just
         /// come at the end of the name, so semantically this is wrong. Positionally, it's correct.
         /// </summary>
-        private static readonly ISet<string> Suffixes = new HashSet<string>()
+        public static readonly ISet<string> Suffixes = new HashSet<string>()
         {
             "esq",
             "esquire",
@@ -81,7 +81,7 @@
         /// When these titles appear with a single other name, that name is a first name, e.g.
         /// "Sir John", "Sister Mary", "Queen Elizabeth".
         /// </summary>
-        private static readonly ISet<string> FirstNameTitles = new HashSet<string>
+        public static readonly ISet<string> FirstNameTitles = new HashSet<string>
         {
             "sir",
             "dame",
@@ -106,7 +106,7 @@
         /// The parser recognizes chains of these including conjunctions allowing 
         /// recognition titles like "Deputy Secretary of State".
         /// </summary>
-        private static readonly ISet<string> Titles = new HashSet<string>
+        public static readonly ISet<string> Titles = new HashSet<string>
         {
             // <FirstNameTitles>
             "sir",
