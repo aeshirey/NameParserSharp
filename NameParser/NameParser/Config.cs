@@ -48,6 +48,8 @@
         {
             "esq",
             "esquire",
+            "etal",
+            "et al",
             "jr",
             "jnr",
             "sr",
