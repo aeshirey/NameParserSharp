@@ -14,6 +14,169 @@ namespace NameParseTest
             var parsed = new HumanName(null);
         }
 
+        [TestMethod]
+        public void LastNameCommaFirst()
+        {
+            var parsed = new HumanName("bennett, daryl");
+
+            Assert.AreEqual(string.Empty, parsed.Title);
+            Assert.AreEqual("daryl", parsed.First);
+            Assert.AreEqual(string.Empty, parsed.Middle);
+            Assert.AreEqual("bennett", parsed.Last);
+            Assert.AreEqual(string.Empty, parsed.Suffix);
+            Assert.AreEqual(string.Empty, parsed.Nickname);
+            Assert.AreEqual("bennett", parsed.LastBase);
+            Assert.AreEqual(string.Empty, parsed.LastPrefixes);
+
+            parsed.Normalize();
+
+            Assert.AreEqual(string.Empty, parsed.Title);
+            Assert.AreEqual("Daryl", parsed.First);
+            Assert.AreEqual(string.Empty, parsed.Middle);
+            Assert.AreEqual("Bennett", parsed.Last);
+            //Assert.AreEqual("Daryl Bennett", parsed.FullName);
+            Assert.AreEqual(string.Empty, parsed.Suffix);
+            Assert.AreEqual(string.Empty, parsed.Nickname);
+            Assert.AreEqual(string.Empty, parsed.LastPrefixes);
+
+        }
+
+        [TestMethod]
+        public void TwoNameFollowingLastName()
+        {
+            HumanName.ParseMultipleNames = true;
+            var parsed = new HumanName("bennett, daryl and courtney");
+
+            Assert.AreEqual(string.Empty, parsed.Title);
+            Assert.AreEqual("daryl", parsed.First);
+            Assert.AreEqual(string.Empty, parsed.Middle);
+            Assert.AreEqual("bennett", parsed.Last);
+            Assert.AreEqual(string.Empty, parsed.Suffix);
+            Assert.AreEqual(string.Empty, parsed.Nickname);
+            Assert.AreEqual("bennett", parsed.LastBase);
+            Assert.AreEqual(string.Empty, parsed.LastPrefixes);
+
+            parsed.Normalize();
+
+            Assert.AreEqual(string.Empty, parsed.Title);
+            Assert.AreEqual("Daryl", parsed.First);
+            Assert.AreEqual(string.Empty, parsed.Middle);
+            Assert.AreEqual("Bennett", parsed.Last);
+            Assert.AreEqual(string.Empty, parsed.Suffix);
+            Assert.AreEqual(string.Empty, parsed.Nickname);
+            Assert.AreEqual("Bennett", parsed.LastBase);
+            Assert.AreEqual(string.Empty, parsed.LastPrefixes);
+
+            Assert.IsNotNull(parsed.AdditionalName);
+
+            parsed.AdditionalName.Normalize();
+
+            Assert.AreEqual(string.Empty, parsed.AdditionalName.Title);
+            Assert.AreEqual("Courtney", parsed.AdditionalName.First);
+            Assert.AreEqual(string.Empty, parsed.AdditionalName.Middle);
+            Assert.AreEqual("Bennett", parsed.AdditionalName.Last);
+        }
+
+        [TestMethod]
+        public void MiddleInitial()
+        {
+            HumanName.ParseMultipleNames = true;
+            var parsed = new HumanName("Thomas R Bloggs");
+
+            Assert.AreEqual("Thomas", parsed.First);
+            Assert.AreEqual("R", parsed.Middle);
+            Assert.AreEqual("Bloggs", parsed.Last);
+
+            Assert.IsNull(parsed.AdditionalName);
+        }
+
+
+        [TestMethod]
+        public void InitialedLastFirst()
+        {
+            HumanName.ParseMultipleNames = false;
+            var parsed = new HumanName("Jones Thomas P");
+
+            Assert.AreEqual("", parsed.Title);
+            Assert.AreEqual("Thomas", parsed.First);
+            Assert.AreEqual("P", parsed.Middle);
+            Assert.AreEqual("Jones", parsed.Last);
+
+            Assert.IsNull(parsed.AdditionalName);
+        }
+
+        [TestMethod]
+        public void TwoNames_InitialedLastFirst()
+        {
+            HumanName.ParseMultipleNames = true;
+            var parsed = new HumanName("Jones Thomas P & Tricia A");
+
+            Assert.AreEqual("", parsed.Title);
+            Assert.AreEqual("Thomas", parsed.First);
+            Assert.AreEqual("P", parsed.Middle);
+            Assert.AreEqual("Jones", parsed.Last);
+
+            parsed.Normalize();
+
+            Assert.IsNotNull(parsed.AdditionalName);
+
+            parsed.AdditionalName.Normalize();
+
+            Assert.AreEqual("", parsed.AdditionalName.Title);
+            Assert.AreEqual("Tricia", parsed.AdditionalName.First);
+            Assert.AreEqual("A", parsed.AdditionalName.Middle);
+            Assert.AreEqual("Jones", parsed.AdditionalName.Last);
+
+            Assert.IsNull(parsed.AdditionalName.AdditionalName);
+        }
+
+        [TestMethod]
+        public void TwoNames_LastCommaFirst()
+        {
+            HumanName.ParseMultipleNames = true;
+            var parsed = new HumanName("Jones, Thomas & Tricia");
+
+            Assert.AreEqual("", parsed.Title);
+            Assert.AreEqual("Thomas", parsed.First);
+            Assert.AreEqual("", parsed.Middle);
+            Assert.AreEqual("Jones", parsed.Last);
+
+            parsed.Normalize();
+
+            Assert.IsNotNull(parsed.AdditionalName);
+
+            parsed.AdditionalName.Normalize();
+
+            Assert.AreEqual("", parsed.AdditionalName.Title);
+            Assert.AreEqual("Tricia", parsed.AdditionalName.First);
+            Assert.AreEqual("", parsed.AdditionalName.Middle);
+            Assert.AreEqual("Jones", parsed.AdditionalName.Last);
+
+            Assert.IsNull(parsed.AdditionalName.AdditionalName);
+        }
+
+        [TestMethod]
+        public void Names_Numerical()
+        {
+            var parsed = new HumanName("CHARLES ANDREW KONIA III");
+
+            Assert.AreEqual("", parsed.Title);
+            Assert.AreEqual("CHARLES", parsed.First);
+            Assert.AreEqual("ANDREW", parsed.Middle);
+            Assert.AreEqual("KONIA", parsed.Last);
+            Assert.AreEqual("III", parsed.Suffix);
+
+            parsed.Normalize();
+
+            Assert.AreEqual("", parsed.Title);
+            Assert.AreEqual("Charles", parsed.First);
+            Assert.AreEqual("Andrew", parsed.Middle);
+            Assert.AreEqual("Konia", parsed.Last);
+            Assert.AreEqual("III", parsed.Suffix);
+
+            Assert.IsNull(parsed.AdditionalName);
+        }
+
 
         [TestMethod]
         public void BlankInput()
