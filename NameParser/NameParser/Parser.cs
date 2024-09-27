@@ -21,6 +21,8 @@ namespace NameParser
 
         public static bool ParseMultipleNames { get; set; }
 
+        public bool LastIsFirst { get; set; } = false;
+
         /// <summary>
         /// The full name without nickname
         /// </summary>
@@ -377,10 +379,13 @@ namespace NameParser
 
                 var pieces = ParsePieces(parts);
 
+                //Set Last is first if we find an initial at the end
+                if (IsAnInitial(pieces[pieces.Length - 1])) LastIsFirst = true;
+
                 for (var i = 0; i < pieces.Length; i++)
                 {
                     var piece = pieces[i];
-                    var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];
+                    var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];                                      
 
                     // title must have a next piece, unless it's just a title
                     if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) || pieces.Length == 1))
@@ -405,11 +410,22 @@ namespace NameParser
                         _LastList.Add(piece);
                         _SuffixList = _SuffixList.Concat(pieces.Skip(i + 1)).ToList();
                         break;
-                    }
+                    }                    
                     else if (!string.IsNullOrEmpty(nxt))
                     {
-                        // another component exists, so this is likely a middle name
-                        _MiddleList.Add(piece);
+                        //Last is an initial so set that, current piece is first and first is last
+                        if (LastIsFirst && IsAnInitial(nxt))
+                        {
+                            _MiddleList.Add(nxt);
+                            _LastList.Add(_FirstList.First());
+                            _FirstList.RemoveAt(0);
+                            _FirstList.Add(piece);
+                        }
+                        else
+                        {
+                            // another component exists, so this is likely a middle name
+                            _MiddleList.Add(piece);
+                        }
                     }
                     else if (!ParseMultipleNames || AdditionalName == null)
                     {
@@ -420,7 +436,15 @@ namespace NameParser
                         }
                         else
                         {
-                            _LastList.Add(piece);
+                            // Last is first in an addition name means this will be an Initial and the last name will come from the first part name
+                            if (LastIsFirst && IsAnInitial(piece) && !_MiddleList.Any())
+                            {
+                                _MiddleList.Add(piece);
+                            }
+                            else if (!LastIsFirst)
+                            {
+                                _LastList.Add(piece);
+                            }
                         }
                     }
                     else if (AdditionalName._LastList.Any() && IsAnInitial(piece))
@@ -430,7 +454,13 @@ namespace NameParser
                     }
                     else
                     {
-                        _LastList.Add(piece);
+                        if(!LastIsFirst)
+                            _LastList.Add(piece);
+
+                        if (!AdditionalName._LastList.Any())
+                        {
+                            AdditionalName._LastList = _LastList;
+                        }
                     }
                 }
             }
