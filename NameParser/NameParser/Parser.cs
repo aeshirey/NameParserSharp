@@ -3,7 +3,6 @@ namespace NameParser
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Parse a person's name into individual components.
@@ -552,10 +551,9 @@ namespace NameParser
             // @"john (j"" jones", @"samuel (sammy"" samsonite"
 
             // https://code.google.com/p/python-nameparser/issues/detail?id=33
-            var nicknameRegex = new Regex(@"\s*(?:\((.+?)\))|(?:([""'])(.+?)\2)");
             nicknameList = new List<string>();
 
-            var match = nicknameRegex.Match(fullName);
+            var match = RegexNickname.Match(fullName);
 
             var nicknameFound = false;
             while (match.Success && match.Groups[0].Value.Length > 0)
@@ -567,7 +565,7 @@ namespace NameParser
                 var matchGroup = match.Groups[0].Value.TrimStart().StartsWith("(") ? 1 : 3; // which regex group was used: 1 is for parens; 3 is single- or double-quoted nicknames
                 nicknameList.Add(match.Groups[matchGroup].Value);
 
-                match = nicknameRegex.Match(fullName);
+                match = RegexNickname.Match(fullName);
             }
 
             // normalize whitespace

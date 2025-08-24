@@ -33,7 +33,12 @@
         /// <summary>
         /// For handling names that start with Mc or Mac such as McBride, MacDonald
         /// </summary>
-        private static readonly Regex RegexMac = new Regex(@"^(ma?c)(\w+)", RegexOptions.IgnoreCase);
+        private static readonly Regex RegexMac = new Regex(@"^(ma?c)(\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
+        /// For extracting optional quoted nicknames from full names.
+        /// </summary>
+        private static readonly Regex RegexNickname = new Regex(@"\s*(?:\((.+?)\))|(?:([""'])(.+?)\2)", RegexOptions.Compiled);
 
         /// <summary>
         /// Pieces that come at the end of the name but are not last names. These potentially
