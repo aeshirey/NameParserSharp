@@ -23,13 +23,12 @@
         /// </summary>
         public static readonly ISet<string> Conjunctions = new HashSet<string> { "&", "and", "et", "e", "of", "the", "und", "y" };
 
-
         /// <summary>
         /// Name pieces that appear before a last name. They join to the piece that follows them to make one new piece.
         /// </summary>
-        public static readonly ISet<string> Prefixes = new HashSet<string> 
+        public static readonly ISet<string> Prefixes = new HashSet<string>
         {
-            "abu", "bon", "bin", "da", "dal", "de", "del", "dem", "den", "der", "de", "di", "dí", "het", "ibn", "in", "la", "le", "onder", "op", "san", "santa", "st", "ste", "'t", "ten", "van", "vel", "von"
+            "abu", "bon", "bin", "da", "dal", "de", "del", "dem", "den", "der", "di", "dí", "het", "ibn", "in", "la", "le", "onder", "op", "san", "santa", "st", "ste", "'t", "ten", "van", "vel", "von"
         };
 
         /// <summary>
@@ -40,11 +39,10 @@
         /// <summary>
         /// Pieces that come at the end of the name but are not last names. These potentially
         /// conflict with initials that might be at the end of the name.
-
         /// These may be updated in the future because some of them are actually titles that just
         /// come at the end of the name, so semantically this is wrong. Positionally, it's correct.
         /// </summary>
-        public static readonly ISet<string> Suffixes = new HashSet<string>()
+        public static readonly ISet<string> Suffixes = new HashSet<string>
         {
             "esq",
             "esquire",
@@ -99,31 +97,14 @@
             "pope"
         };
 
-
         /// <summary>
         /// **Cannot include things that could also be first names**, e.g. "dean".
         /// Many of these from wikipedia: https://en.wikipedia.org/wiki/Title.
-        /// The parser recognizes chains of these including conjunctions allowing 
+        /// The parser recognizes chains of these including conjunctions allowing
         /// recognition titles like "Deputy Secretary of State".
         /// </summary>
-        public static readonly ISet<string> Titles = new HashSet<string>
+        public static readonly ISet<string> Titles = new HashSet<string>(FirstNameTitles)
         {
-            // <FirstNameTitles>
-            "sir",
-            "dame",
-            "king",
-            "queen",
-            "master",
-            "maid",
-            "uncle",
-            "auntie",
-            "aunt",
-            "brother",
-            "sister",
-            "mother",
-            "father",
-            "pope",
-            // </FirstNameTitles>
             "dr",
             "doctor",
             "miss",
