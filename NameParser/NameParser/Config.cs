@@ -1,6 +1,5 @@
 ﻿namespace NameParser
 {
-    using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
@@ -9,13 +8,13 @@
         /// <summary>
         /// Any pieces that are not capitalized by capitalizing the first letter.
         /// </summary>
-        public static readonly ISet<Tuple<string, string>> CapitalizationExceptions = new HashSet<Tuple<string, string>>
+        public static readonly IDictionary<string, string> CapitalizationExceptions = new Dictionary<string, string>
         {
-            Tuple.Create("ii", "II"),
-            Tuple.Create("iii", "III"),
-            Tuple.Create("iv", "IV"),
-            Tuple.Create("md", "M.D."),
-            Tuple.Create("phd", "Ph.D.")
+            { "ii", "II" },
+            { "iii", "III" },
+            { "iv", "IV" },
+            { "md", "M.D." },
+            { "phd", "Ph.D." }
         };
 
         /// <summary>

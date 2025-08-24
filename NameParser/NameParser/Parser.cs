@@ -727,11 +727,9 @@ namespace NameParser
             }
 
             // "phd" => "Ph.D."; "ii" => "II"
-            var exception = CapitalizationExceptions.FirstOrDefault(tup => tup.Item1 == wordLower);
-
-            if (exception != null)
+            if (CapitalizationExceptions.TryGetValue(wordLower, out var exception))
             {
-                return exception.Item2;
+                return exception;
             }
 
             // special case: "macbeth" should be "MacBeth"; "mcbride" -> "McBride"
