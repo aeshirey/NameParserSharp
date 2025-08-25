@@ -111,7 +111,7 @@ namespace NameParserTest
             var fml = new HumanName("john x smith");
             var lfm = new HumanName("smith, john x");
 
-            Assert.IsTrue(fml == lfm);
+            Assert.AreEqual(fml, lfm);
         }
 
         [TestMethod]

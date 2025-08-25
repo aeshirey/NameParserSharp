@@ -124,6 +124,26 @@ namespace NameParser
             return !(left == right);
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is HumanName other && this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = 17;
+                hash = hash * 23 + (Title?.GetHashCode() ?? 0);
+                hash = hash * 23 + (First?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Middle?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Last?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Suffix?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Nickname?.GetHashCode() ?? 0);
+                return hash;
+            }
+        }
+
         /// <summary>
         /// Return the parsed name as a dictionary of its attributes.
         /// </summary>
