@@ -119,11 +119,11 @@ namespace NameParserTest
         {
             var parsed = new HumanName("\"TREY\" ROBERT HENRY BUSH III");
 
-            Assert.AreEqual(parsed.First, "ROBERT");
-            Assert.AreEqual(parsed.Middle, "HENRY");
-            Assert.AreEqual(parsed.Last, "BUSH");
-            Assert.AreEqual(parsed.Nickname, "TREY");
-            Assert.AreEqual(parsed.Suffix, "III");
+            Assert.AreEqual("ROBERT", parsed.First);
+            Assert.AreEqual("HENRY", parsed.Middle);
+            Assert.AreEqual("BUSH", parsed.Last);
+            Assert.AreEqual("TREY", parsed.Nickname);
+            Assert.AreEqual("III", parsed.Suffix);
         }
 
         [TestMethod]
@@ -131,11 +131,11 @@ namespace NameParserTest
         {
             var parsed = new HumanName("'TREY' ROBERT HENRY BUSH III");
 
-            Assert.AreEqual(parsed.First, "ROBERT");
-            Assert.AreEqual(parsed.Middle, "HENRY");
-            Assert.AreEqual(parsed.Last, "BUSH");
-            Assert.AreEqual(parsed.Nickname, "TREY");
-            Assert.AreEqual(parsed.Suffix, "III");
+            Assert.AreEqual("ROBERT", parsed.First);
+            Assert.AreEqual("HENRY", parsed.Middle);
+            Assert.AreEqual("BUSH", parsed.Last);
+            Assert.AreEqual("TREY", parsed.Nickname);
+            Assert.AreEqual("III", parsed.Suffix);
         }
 
         [TestMethod]
@@ -290,10 +290,10 @@ namespace NameParserTest
         {
             var parsed = new HumanName("Surname, John Middle, III");
 
-            Assert.AreEqual(parsed.First, "John");
-            Assert.AreEqual(parsed.Middle, "Middle");
-            Assert.AreEqual(parsed.Last, "Surname");
-            Assert.AreEqual(parsed.Suffix, "III");
+            Assert.AreEqual("John", parsed.First);
+            Assert.AreEqual("Middle", parsed.Middle);
+            Assert.AreEqual("Surname", parsed.Last);
+            Assert.AreEqual("III", parsed.Suffix);
         }
 
         [TestMethod]
@@ -362,16 +362,16 @@ namespace NameParserTest
         {
             // Default behavior
             var parsedPrefix = new HumanName("Mr. Del Richards");
-            Assert.AreEqual(parsedPrefix.Title, "Mr.");
+            Assert.AreEqual("Mr.", parsedPrefix.Title);
             Assert.IsEmpty(parsedPrefix.First);
-            Assert.AreEqual(parsedPrefix.Last, "Del Richards");
-            Assert.AreEqual(parsedPrefix.LastPrefixes, "Del");
+            Assert.AreEqual("Del Richards", parsedPrefix.Last);
+            Assert.AreEqual("Del", parsedPrefix.LastPrefixes);
 
             // A single prefix should be treated as a first name when no first exists
             var parsedFirst = new HumanName("Mr. Del Richards", Prefer.FirstOverPrefix);
-            Assert.AreEqual(parsedFirst.Title, "Mr.");
-            Assert.AreEqual(parsedFirst.First, "Del");
-            Assert.AreEqual(parsedFirst.Last, "Richards");
+            Assert.AreEqual("Mr.", parsedFirst.Title);
+            Assert.AreEqual("Del", parsedFirst.First);
+            Assert.AreEqual("Richards", parsedFirst.Last);
             Assert.IsEmpty(parsedFirst.LastPrefixes);
         }
     }
