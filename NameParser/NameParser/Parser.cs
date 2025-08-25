@@ -636,8 +636,14 @@ namespace NameParser
                 return pieces.ToArray();
             }
 
-            foreach (var conj in pieces.Where(IsConjunction).Reverse())
+            for (var i = pieces.Count - 1; i >= 0; i--)
             {
+                var conj = pieces[i];
+                if (!IsConjunction(conj))
+                {
+                    continue;
+                }
+
                 // loop through the pieces backwards, starting at the end of the list.
                 // Join conjunctions to the pieces on either side of them.
                 if (conj.Length == 1 && pieces.Count(IsRootname) < 4)
@@ -649,30 +655,23 @@ namespace NameParser
                     continue;
                 }
 
-                var index = pieces.IndexOf(conj);
-
-                if (index == -1)
-                {
-                    continue;
-                }
-
-                if (index < pieces.Count - 1)
+                if (i < pieces.Count - 1)
                 {
                     // if this is not the last piece
                     string newPiece;
-                    if (index == 0)
+                    if (i == 0)
                     {
                         // if this is the first piece and it's a conjunction
-                        var nxt = pieces[index + 1];
+                        var nxt = pieces[i + 1];
                         var cons = IsTitle(nxt) ? Conjunctions : Titles;
                         newPiece = string.Join(" ", pieces.Take(2));
                         cons.Add(newPiece);
-                        pieces[index] = newPiece;
-                        pieces.RemoveAt(index + 1);
+                        pieces[i] = newPiece;
+                        pieces.RemoveAt(i + 1);
                         continue;
                     }
 
-                    if (IsConjunction(pieces[index - 1]))
+                    if (IsConjunction(pieces[i - 1]))
                     {
                         // if the piece in front of this one is a conjunction too,
                         // add new_piece (this conjunction and the following piece)
@@ -681,16 +680,16 @@ namespace NameParser
                         // e.g. for ["Lord","of","the Universe"], put "the Universe"
                         // into the conjunctions constant.
 
-                        newPiece = string.Join(" ", pieces.Skip(index).Take(2));
+                        newPiece = string.Join(" ", pieces.Skip(i).Take(2));
                         Conjunctions.Add(newPiece);
-                        pieces[index] = newPiece;
-                        pieces.RemoveAt(index + 1);
+                        pieces[i] = newPiece;
+                        pieces.RemoveAt(i + 1);
                         continue;
                     }
 
-                    newPiece = string.Join(" ", pieces.Skip(index - 1).Take(3));
+                    newPiece = string.Join(" ", pieces.Skip(i - 1).Take(3));
 
-                    if (IsTitle(pieces[index - 1]))
+                    if (IsTitle(pieces[i - 1]))
                     {
                         // if the second name is a title, assume the first one is too and add the
                         // two titles with the conjunction between them to the titles constant
@@ -699,9 +698,9 @@ namespace NameParser
                         Titles.Add(newPiece);
                     }
 
-                    pieces[index - 1] = newPiece;
-                    pieces.RemoveAt(index);
-                    pieces.RemoveAt(index);
+                    pieces[i - 1] = newPiece;
+                    pieces.RemoveAt(i);
+                    pieces.RemoveAt(i);
                 }
             }
 
