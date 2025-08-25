@@ -1,5 +1,6 @@
 ﻿namespace NameParser
 {
+    using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
@@ -8,7 +9,7 @@
         /// <summary>
         /// Any pieces that are not capitalized by capitalizing the first letter.
         /// </summary>
-        public static readonly IDictionary<string, string> CapitalizationExceptions = new Dictionary<string, string>
+        public static readonly IDictionary<string, string> CapitalizationExceptions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "ii", "II" },
             { "iii", "III" },
@@ -20,12 +21,12 @@
         /// <summary>
         /// Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&". "of" and "the" are also include to facilitate joining multiple titles, e.g. "President of the United States".
         /// </summary>
-        public static readonly ISet<string> Conjunctions = new HashSet<string> { "&", "and", "et", "e", "of", "the", "und", "y" };
+        public static readonly ISet<string> Conjunctions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "&", "and", "et", "e", "of", "the", "und", "y" };
 
         /// <summary>
         /// Name pieces that appear before a last name. They join to the piece that follows them to make one new piece.
         /// </summary>
-        public static readonly ISet<string> Prefixes = new HashSet<string>
+        public static readonly ISet<string> Prefixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "'t",
             "abu",
@@ -73,7 +74,7 @@
         /// These may be updated in the future because some of them are actually titles that just
         /// come at the end of the name, so semantically this is wrong. Positionally, it's correct.
         /// </summary>
-        public static readonly ISet<string> Suffixes = new HashSet<string>
+        public static readonly ISet<string> Suffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "2",
             "cfp",
@@ -110,7 +111,7 @@
         /// When these titles appear with a single other name, that name is a first name, e.g.
         /// "Sir John", "Sister Mary", "Queen Elizabeth".
         /// </summary>
-        public static readonly ISet<string> FirstNameTitles = new HashSet<string>
+        public static readonly ISet<string> FirstNameTitles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "aunt",
             "auntie",
@@ -134,7 +135,7 @@
         /// The parser recognizes chains of these including conjunctions allowing
         /// recognition titles like "Deputy Secretary of State".
         /// </summary>
-        public static readonly ISet<string> Titles = new HashSet<string>(FirstNameTitles)
+        public static readonly ISet<string> Titles = new HashSet<string>(FirstNameTitles, StringComparer.OrdinalIgnoreCase)
         {
             "1lt",
             "1sgt",

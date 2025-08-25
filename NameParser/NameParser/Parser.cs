@@ -200,22 +200,22 @@ namespace NameParser
 
         private static bool IsTitle(string value)
         {
-            return Titles.Contains(value.ToLower().Replace(".", string.Empty));
+            return Titles.Contains(value.Replace(".", string.Empty));
         }
 
         private static bool IsConjunction(string piece)
         {
-            return Conjunctions.Contains(piece.ToLower().Replace(".", string.Empty)) && !IsAnInitial(piece);
+            return Conjunctions.Contains(piece.Replace(".", string.Empty)) && !IsAnInitial(piece);
         }
 
         private static bool IsPrefix(string piece)
         {
-            return Prefixes.Contains(piece.ToLower().Replace(".", string.Empty)) && !IsAnInitial(piece);
+            return Prefixes.Contains(piece.Replace(".", string.Empty)) && !IsAnInitial(piece);
         }
 
         private static bool IsSuffix(string piece)
         {
-            return Suffixes.Contains(piece.Replace(".", string.Empty).ToLower()) && !IsAnInitial(piece);
+            return Suffixes.Contains(piece.Replace(".", string.Empty)) && !IsAnInitial(piece);
         }
 
         private static bool AreSuffixes(IEnumerable<string> pieces)
@@ -240,10 +240,10 @@ namespace NameParser
         /// <returns>False if <see cref="piece"/> is a prefix (de, abu, bin), suffix (jr, iv, cpa), title (mr, pope), or initial (x, e.); true otherwise</returns>
         private static bool IsRootname(string piece)
         {
-            var lcPiece = piece.ToLower().Replace(".", string.Empty);
-            return !Suffixes.Contains(lcPiece)
-                && !Prefixes.Contains(lcPiece)
-                && !Titles.Contains(lcPiece)
+            var noDots = piece.Replace(".", string.Empty);
+            return !Suffixes.Contains(noDots)
+                && !Prefixes.Contains(noDots)
+                && !Titles.Contains(noDots)
                 && !IsAnInitial(piece);
         }
 
@@ -273,7 +273,7 @@ namespace NameParser
         private void PostProcessFirstnames()
         {
             if (!string.IsNullOrEmpty(Title)
-                && !FirstNameTitles.Contains(Title.ToLower().Replace(".", string.Empty))
+                && !FirstNameTitles.Contains(Title.Replace(".", string.Empty))
                 && 1 == _firstList.Count + _lastList.Count)
             {
                 if (_firstList.Any())
