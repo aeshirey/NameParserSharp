@@ -362,21 +362,24 @@ namespace NameParser
         {
             if (ParseMultipleNames)
             {
-                if (_fullName.Contains('&'))
+                var split = _fullName.IndexOf('&');
+                if (split >= 0)
                 {
-                    var split = _fullName.IndexOf('&');
                     var primary = _fullName.Substring(0, split);
                     var secondary = _fullName.Substring(split + 1);
                     AdditionalName = new HumanName(secondary);
                     _fullName = primary;
                 }
-                else if (_fullName.ToLowerInvariant().Contains(" and "))
+                else
                 {
-                    var split = _fullName.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
-                    var primary = _fullName.Substring(0, split);
-                    var secondary = _fullName.Substring(split + 5 /* length of " and " */);
-                    AdditionalName = new HumanName(secondary);
-                    _fullName = primary;
+                    split = _fullName.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
+                    if (split >= 0)
+                    {
+                        var primary = _fullName.Substring(0, split);
+                        var secondary = _fullName.Substring(split + 5 /* length of " and " */);
+                        AdditionalName = new HumanName(secondary);
+                        _fullName = primary;
+                    }
                 }
             }
 
