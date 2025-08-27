@@ -27,20 +27,20 @@ namespace NameParser
         /// </summary>
         public string FullName
         {
-            get => _FullName;
+            get => _fullName;
             private set
             {
-                _OriginalName = value;
-                _FullName = _OriginalName;
+                _originalName = value;
+                _fullName = _originalName;
 
-                _TitleList = new List<string>();
-                _FirstList = new List<string>();
-                _MiddleList = new List<string>();
-                _LastList = new List<string>();
-                _SuffixList = new List<string>();
-                _NicknameList = new List<string>();
-                _LastBaseList = new List<string>();
-                _LastPrefixList = new List<string>();
+                _titleList = new List<string>();
+                _firstList = new List<string>();
+                _middleList = new List<string>();
+                _lastList = new List<string>();
+                _suffixList = new List<string>();
+                _nicknameList = new List<string>();
+                _lastBaseList = new List<string>();
+                _lastPrefixList = new List<string>();
 
                 if (!string.IsNullOrEmpty(value))
                 {
@@ -49,17 +49,17 @@ namespace NameParser
             }
         }
 
-        public string Title => string.Join(" ", _TitleList);
+        public string Title => string.Join(" ", _titleList);
 
-        public string First => string.Join(" ", _FirstList);
+        public string First => string.Join(" ", _firstList);
 
-        public string Middle => string.Join(" ", _MiddleList);
+        public string Middle => string.Join(" ", _middleList);
 
-        public string Last => string.Join(" ", _LastList);
+        public string Last => string.Join(" ", _lastList);
 
-        public string Suffix => string.Join(" ", _SuffixList);
+        public string Suffix => string.Join(" ", _suffixList);
 
-        public string Nickname => string.Join(" ", _NicknameList);
+        public string Nickname => string.Join(" ", _nicknameList);
 
         /// <summary>
         /// If <see cref="ParseMultipleNames"/> is true and the input contains "&" or "and", the additional
@@ -69,22 +69,23 @@ namespace NameParser
         /// </summary>
         public HumanName AdditionalName { get; private set; }
 
-        public string LastBase => string.Join(" ", _LastBaseList);
-        public string LastPrefixes => string.Join(" ", _LastPrefixList);
+        public string LastBase => string.Join(" ", _lastBaseList);
+        public string LastPrefixes => string.Join(" ", _lastPrefixList);
 
         #endregion
 
-        private string _FullName, _OriginalName;
+        private string _fullName;
+        private string _originalName;
 
-        private IList<string> _TitleList;
-        private IList<string> _FirstList;
-        private IList<string> _MiddleList;
-        private IList<string> _LastList;
-        private IList<string> _SuffixList;
-        private IList<string> _NicknameList;
-        private IList<string> _LastBaseList;
-        private IList<string> _LastPrefixList;
-        private Prefer prefs;
+        private IList<string> _titleList;
+        private IList<string> _firstList;
+        private IList<string> _middleList;
+        private IList<string> _lastList;
+        private IList<string> _suffixList;
+        private IList<string> _nicknameList;
+        private IList<string> _lastBaseList;
+        private IList<string> _lastPrefixList;
+        private readonly Prefer _prefs;
 
         public HumanName(string fullName, Prefer prefs = Prefer.Default)
         {
@@ -93,7 +94,7 @@ namespace NameParser
                 throw new ArgumentNullException(nameof(fullName));
             }
 
-            this.prefs = prefs;
+            _prefs = prefs;
             FullName = fullName;
         }
 
@@ -244,17 +245,17 @@ namespace NameParser
         {
             if (!string.IsNullOrEmpty(Title)
                 && !FirstNameTitles.Contains(Title.ToLower().Replace(".", string.Empty))
-                && 1 == _FirstList.Count + _LastList.Count)
+                && 1 == _firstList.Count + _lastList.Count)
             {
-                if (_FirstList.Any())
+                if (_firstList.Any())
                 {
-                    _LastList = _FirstList;
-                    _FirstList = new List<string>();
+                    _lastList = _firstList;
+                    _firstList = new List<string>();
                 }
                 else
                 {
-                    _FirstList = _LastList;
-                    _LastList = new List<string>();
+                    _firstList = _lastList;
+                    _lastList = new List<string>();
                 }
             }
         }
@@ -267,7 +268,7 @@ namespace NameParser
         private void PostProcessLastname()
         {
             // parse out 'words' from the last name
-            var words = _LastList
+            var words = _lastList
                 .SelectMany(part => part.Split(' '))
                 .ToList();
 
@@ -277,20 +278,20 @@ namespace NameParser
                 prefixCount++;
             }
 
-            if (prefs.HasFlag(Prefer.FirstOverPrefix)
-                && _FirstList.Count == 0
+            if (_prefs.HasFlag(Prefer.FirstOverPrefix)
+                && _firstList.Count == 0
                 && prefixCount == 1
                 && words.Count > 1)
             {
-                _FirstList = words.Take(1).ToList();
-                _LastList = words.Skip(1).ToList();
+                _firstList = words.Take(1).ToList();
+                _lastList = words.Skip(1).ToList();
             }
             else
             {
-                _LastPrefixList = words.Take(prefixCount).ToList();
+                _lastPrefixList = words.Take(prefixCount).ToList();
             }
 
-            _LastBaseList = words.Skip(prefixCount).ToList();
+            _lastBaseList = words.Skip(prefixCount).ToList();
         }
 
         private void PostProcessAdditionalName()
@@ -305,7 +306,7 @@ namespace NameParser
             // the primary's last name from the secondary.
             if (string.IsNullOrEmpty(Last))
             {
-                _LastList = AdditionalName._LastList;
+                _lastList = AdditionalName._lastList;
             }
             else
             {
@@ -313,7 +314,7 @@ namespace NameParser
                 var next = AdditionalName;
                 while (next != null && string.IsNullOrEmpty(next.Last))
                 {
-                    next._LastList = _LastList;
+                    next._lastList = _lastList;
                     next = next.AdditionalName;
                 }
             }
@@ -332,28 +333,28 @@ namespace NameParser
         {
             if (ParseMultipleNames)
             {
-                if (_FullName.Contains('&'))
+                if (_fullName.Contains('&'))
                 {
-                    var split = _FullName.IndexOf('&');
-                    var primary = _FullName.Substring(0, split);
-                    var secondary = _FullName.Substring(split + 1);
+                    var split = _fullName.IndexOf('&');
+                    var primary = _fullName.Substring(0, split);
+                    var secondary = _fullName.Substring(split + 1);
                     AdditionalName = new HumanName(secondary);
-                    _FullName = primary;
+                    _fullName = primary;
                 }
-                else if (_FullName.ToLowerInvariant().Contains(" and "))
+                else if (_fullName.ToLowerInvariant().Contains(" and "))
                 {
-                    var split = _FullName.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
-                    var primary = _FullName.Substring(0, split);
-                    var secondary = _FullName.Substring(split + 5 /* length of " and " */);
+                    var split = _fullName.IndexOf(" and ", StringComparison.InvariantCultureIgnoreCase);
+                    var primary = _fullName.Substring(0, split);
+                    var secondary = _fullName.Substring(split + 5 /* length of " and " */);
                     AdditionalName = new HumanName(secondary);
-                    _FullName = primary;
+                    _fullName = primary;
                 }
             }
 
-            ParseNicknames(ref _FullName, out _NicknameList);
+            ParseNicknames(ref _fullName, out _nicknameList);
 
             // break up fullName by commas
-            var parts = _FullName
+            var parts = _fullName
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(part => part.Trim())
                 .ToList();
@@ -380,50 +381,50 @@ namespace NameParser
                     {
                         // some last names appear as titles (https://github.com/aeshirey/NameParserSharp/issues/9)
                         // if we've already parsed out titles, first, or middle names, something appearing as a title may in fact be a last name
-                        if (_FirstList.Count > 0 || _MiddleList.Count > 0)
+                        if (_firstList.Count > 0 || _middleList.Count > 0)
                         {
-                            _LastList.Add(piece);
+                            _lastList.Add(piece);
                         }
                         else
                         {
-                            _TitleList.Add(piece);
+                            _titleList.Add(piece);
                         }
                     }
                     else if (string.IsNullOrEmpty(First))
                     {
-                        _FirstList.Add(piece);
+                        _firstList.Add(piece);
                     }
                     else if (AreSuffixes(pieces.Skip(i + 1)))
                     {
-                        _LastList.Add(piece);
-                        _SuffixList = _SuffixList.Concat(pieces.Skip(i + 1)).ToList();
+                        _lastList.Add(piece);
+                        _suffixList = _suffixList.Concat(pieces.Skip(i + 1)).ToList();
                         break;
                     }
                     else if (!string.IsNullOrEmpty(nxt))
                     {
                         // another component exists, so this is likely a middle name
-                        _MiddleList.Add(piece);
+                        _middleList.Add(piece);
                     }
                     else if (!ParseMultipleNames || AdditionalName == null)
                     {
                         // no additional name. some last names can appear to be suffixes. try to figure this out
-                        if (_LastList.Count > 0 && IsSuffix(piece))
+                        if (_lastList.Count > 0 && IsSuffix(piece))
                         {
-                            _SuffixList.Add(piece);
+                            _suffixList.Add(piece);
                         }
                         else
                         {
-                            _LastList.Add(piece);
+                            _lastList.Add(piece);
                         }
                     }
-                    else if (AdditionalName._LastList.Any() && IsAnInitial(piece))
+                    else if (AdditionalName._lastList.Any() && IsAnInitial(piece))
                     {
                         // the additional name has a last, and this one looks like a middle. we'll save as a middle and later will copy the last name.
-                        _MiddleList.Add(piece);
+                        _middleList.Add(piece);
                     }
                     else
                     {
-                        _LastList.Add(piece);
+                        _lastList.Add(piece);
                     }
                 }
             }
@@ -431,7 +432,7 @@ namespace NameParser
             {
                 // suffix comma: title first middle last [suffix], suffix [suffix] [, suffix]
                 //               parts[0],                         parts[1:...]
-                _SuffixList = _SuffixList.Concat(parts.Skip(1)).ToList();
+                _suffixList = _suffixList.Concat(parts.Skip(1)).ToList();
                 var pieces = ParsePieces(parts[0].Split(' '));
 
                 for (var i = 0; i < pieces.Length; i++)
@@ -441,20 +442,20 @@ namespace NameParser
 
                     if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) || pieces.Length == 1))
                     {
-                        _TitleList.Add(piece);
+                        _titleList.Add(piece);
                         continue;
                     }
 
                     if (string.IsNullOrEmpty(First))
                     {
-                        _FirstList.Add(piece);
+                        _firstList.Add(piece);
                         continue;
                     }
 
                     if (AreSuffixes(pieces.Skip(i + 1)))
                     {
-                        _LastList.Add(piece);
-                        _SuffixList = pieces.Skip(i + 1).Concat(_SuffixList).ToList();
+                        _lastList.Add(piece);
+                        _suffixList = pieces.Skip(i + 1).Concat(_suffixList).ToList();
                         break;
                     }
 
@@ -463,21 +464,21 @@ namespace NameParser
                     if (!string.IsNullOrEmpty(nxt))
                     {
                         // another component exists, so this is likely a middle name
-                        _MiddleList.Add(piece);
+                        _middleList.Add(piece);
                     }
                     else if (!ParseMultipleNames || AdditionalName == null)
                     {
                         // no additional name, so treat this as a last
-                        _LastList.Add(piece);
+                        _lastList.Add(piece);
                     }
-                    else if (AdditionalName._LastList.Any() && IsAnInitial(piece))
+                    else if (AdditionalName._lastList.Any() && IsAnInitial(piece))
                     {
                         // the additional name has a last, and this one looks like a middle. we'll save as a middle and later will copy the last name.
-                        _MiddleList.Add(piece);
+                        _middleList.Add(piece);
                     }
                     else
                     {
-                        _LastList.Add(piece);
+                        _lastList.Add(piece);
                     }
                 }
             }
@@ -493,13 +494,13 @@ namespace NameParser
                 foreach (var piece in lastnamePieces)
                 {
                     // the first one is always a last name, even if it looks like a suffix
-                    if (IsSuffix(piece) && _LastList.Any())
+                    if (IsSuffix(piece) && _lastList.Any())
                     {
-                        _SuffixList.Add(piece);
+                        _suffixList.Add(piece);
                     }
                     else
                     {
-                        _LastList.Add(piece);
+                        _lastList.Add(piece);
                     }
                 }
 
@@ -509,34 +510,34 @@ namespace NameParser
                     var nxt = i == pieces.Length - 1 ? string.Empty : pieces[i + 1];
                     if (IsTitle(piece) && (!string.IsNullOrEmpty(nxt) || pieces.Length == 1))
                     {
-                        _TitleList.Add(piece);
+                        _titleList.Add(piece);
                     }
                     else if (string.IsNullOrEmpty(First))
                     {
-                        _FirstList.Add(piece);
+                        _firstList.Add(piece);
                     }
                     else if (IsSuffix(piece))
                     {
-                        _SuffixList.Add(piece);
+                        _suffixList.Add(piece);
                     }
                     else
                     {
-                        _MiddleList.Add(piece);
+                        _middleList.Add(piece);
                     }
                 }
 
                 if (parts.Count >= 3 && !string.IsNullOrEmpty(parts[2]))
                 {
-                    _SuffixList = _SuffixList.Concat(parts.Skip(2)).ToList();
+                    _suffixList = _suffixList.Concat(parts.Skip(2)).ToList();
                 }
             }
 
-            IsUnparsable = !_TitleList.Any()
-                         && !_FirstList.Any()
-                         && !_MiddleList.Any()
-                         && !_LastList.Any()
-                         && !_SuffixList.Any()
-                         && !_NicknameList.Any();
+            IsUnparsable = !_titleList.Any()
+                         && !_firstList.Any()
+                         && !_middleList.Any()
+                         && !_lastList.Any()
+                         && !_suffixList.Any()
+                         && !_nicknameList.Any();
 
             PostProcessFirstnames();
             PostProcessLastname();
@@ -763,20 +764,20 @@ namespace NameParser
         /// </summary>
         public void Normalize()
         {
-            _TitleList = _TitleList.Select(CapitalizePiece).ToList();
-            _FirstList = _FirstList.Select(CapitalizePiece).ToList();
-            _MiddleList = _MiddleList.Select(CapitalizePiece).ToList();
-            _LastList = _LastList.Select(CapitalizePiece).ToList(); // CapitalizePiece recognizes prefixes, so it's okay to normalize "van der waals" like this
-            _SuffixList = _SuffixList.Select(CapitalizePiece).ToList();
-            _NicknameList = _NicknameList.Select(CapitalizePiece).ToList();
-            _LastBaseList = _LastBaseList.Select(CapitalizePiece).ToList();
+            _titleList = _titleList.Select(CapitalizePiece).ToList();
+            _firstList = _firstList.Select(CapitalizePiece).ToList();
+            _middleList = _middleList.Select(CapitalizePiece).ToList();
+            _lastList = _lastList.Select(CapitalizePiece).ToList(); // CapitalizePiece recognizes prefixes, so it's okay to normalize "van der waals" like this
+            _suffixList = _suffixList.Select(CapitalizePiece).ToList();
+            _nicknameList = _nicknameList.Select(CapitalizePiece).ToList();
+            _lastBaseList = _lastBaseList.Select(CapitalizePiece).ToList();
             // normalizing _LastPrefixList would effectively be a no-op, so don't bother calling it
 
-            var fullNamePieces = _FullName
+            var fullNamePieces = _fullName
                 .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(CapitalizePiece);
 
-            _FullName = string.Join(" ", fullNamePieces);
+            _fullName = string.Join(" ", fullNamePieces);
         }
 
         #endregion
