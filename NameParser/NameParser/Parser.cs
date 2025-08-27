@@ -220,7 +220,17 @@ namespace NameParser
 
         private static bool AreSuffixes(IEnumerable<string> pieces)
         {
-            return pieces.Any() && pieces.All(IsSuffix);
+            var any = false;
+            foreach (var piece in pieces)
+            {
+                if (!IsSuffix(piece))
+                {
+                    return false;
+                }
+                any = true;
+            }
+
+            return any;
         }
 
         /// <summary>
