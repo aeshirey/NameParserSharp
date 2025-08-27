@@ -613,13 +613,10 @@ namespace NameParser
         /// <returns>pieces split on spaces and joined on conjunctions</returns>
         protected static string[] ParsePieces(IEnumerable<string> parts, int additionalPartsCount = 0)
         {
-            var tmp = new List<string>();
-            foreach (var part in parts)
-            {
-                tmp.AddRange(part.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim(',')));
-            }
-
-            return joinOnConjunctions(tmp, additionalPartsCount);
+            var pieces = parts.SelectMany(part => part.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                .Select(s => s.Trim(','))
+                .ToList();
+            return joinOnConjunctions(pieces, additionalPartsCount);
         }
 
         /// <summary>
